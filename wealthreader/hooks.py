@@ -6,7 +6,8 @@ app_title = "Wealthreader"
 app_publisher = "ADMBit Technologies"
 app_description = "Wealthreader bank feed integration for ERPNext"
 app_email = "info@admbit.com"
-app_license = "mit"
+app_license = "MIT"
+required_apps = ["frappe/erpnext"]
 
 # Apps
 # ------------------

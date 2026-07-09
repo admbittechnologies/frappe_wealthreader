@@ -2,6 +2,7 @@ include MANIFEST.in
 include README.md
 include license.txt
 include pyproject.toml
+include requirements.txt
 recursive-include wealthreader *.csv
 recursive-include wealthreader *.html
 recursive-include wealthreader *.js

@@ -4,8 +4,8 @@ authors = [
     { name = "ADMBit Technologies", email = "info@admbit.com" }
 ]
 description = "Wealthreader bank feed integration for ERPNext"
-requires-python = ">=3.10"
 readme = "README.md"
+requires-python = ">=3.10"
 dynamic = ["version"]
 dependencies = [
     "requests~=2.31.0"
@@ -14,6 +14,13 @@ dependencies = [
 [build-system]
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "wealthreader"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<16.0.0"
+erpnext = ">=15.0.0,<16.0.0"
 
 [tool.frappe.testing.function_type_validation]
 # disabled for now, enable when all functions are typed
