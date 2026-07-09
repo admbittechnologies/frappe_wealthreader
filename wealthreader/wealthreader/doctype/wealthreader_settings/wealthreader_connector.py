@@ -1,10 +1,23 @@
 # Copyright (c) 2026, ADMBit Technologies and contributors
 # For license information, please see license.txt
 
+import os
+
 import requests
 
 import frappe
 from frappe import _
+
+
+def get_api_key():
+	"""Resolve the Wealthreader API key from site config or environment variable.
+
+	ADMBit provisions the key outside the ERPNext UI so the end client never sees it.
+	Lookup order:
+	    1. frappe.conf.wealthreader_api_key
+	    2. WEALTHREADER_API_KEY environment variable
+	"""
+	return frappe.conf.get("wealthreader_api_key") or os.environ.get("WEALTHREADER_API_KEY")
 
 
 class WealthreaderConnector:
@@ -23,7 +36,7 @@ class WealthreaderConnector:
 			frappe.throw(_("Invalid Wealthreader Environment: {0}").format(self.settings.environment))
 
 		self.base_url = self.BASE_URLS[self.settings.environment].rstrip("/")
-		self.api_key = self.settings.get_password("api_key")
+		self.api_key = get_api_key()
 		if not self.api_key:
 			frappe.throw(_("Wealthreader API Key is not configured."))
 

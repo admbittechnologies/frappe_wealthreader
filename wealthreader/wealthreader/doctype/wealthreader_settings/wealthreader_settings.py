@@ -10,6 +10,7 @@ from frappe.utils import add_months, cint, flt, formatdate, getdate, now, today
 
 from wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_connector import (
 	WealthreaderConnector,
+	get_api_key,
 )
 
 
@@ -23,7 +24,6 @@ class WealthreaderSettings(Document):
 		from frappe.types import DF
 
 		allowed_connections: DF.Int
-		api_key: DF.Password | None
 		automatic_sync: DF.Check
 		callback_url: DF.Data | None
 		default_product_types: DF.Data | None
@@ -37,10 +37,14 @@ class WealthreaderSettings(Document):
 
 	def validate(self):
 		if self.enabled:
-			if not self.get_password("api_key"):
-				frappe.throw(_("API Key is required when Wealthreader is enabled."))
 			if not self.environment:
 				frappe.throw(_("Environment is required when Wealthreader is enabled."))
+			if not get_api_key():
+				frappe.throw(
+					_(
+						"Wealthreader API key is not configured. Please ask ADMBit to provision it via site configuration."
+					)
+				)
 			if cint(self.allowed_connections) < 0:
 				frappe.throw(_("Allowed Connections cannot be negative."))
 		self.callback_url = self.get_callback_url()
