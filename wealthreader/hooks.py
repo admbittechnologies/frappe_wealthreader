@@ -95,7 +95,7 @@ after_install = "wealthreader.setup.install.after_install"
 fixtures = [
 	{
 		"doctype": "Workspace",
-		"filters": [["name", "=", "Wealthreader"]],
+		"filters": [["name", "=", "Bank Sync"]],
 	}
 ]
 

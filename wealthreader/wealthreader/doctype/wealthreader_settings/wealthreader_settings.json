@@ -8,18 +8,16 @@
   "enabled",
   "column_break_2",
   "automatic_sync",
-  "license_section",
-  "license_summary",
-  "license_key",
-  "allowed_connections",
-  "column_break_license",
-  "license_expiry_date",
   "credentials_section",
   "api_key",
   "environment",
   "column_break_7",
   "callback_url",
   "widget_domain",
+  "billing_section",
+  "allowed_connections",
+  "column_break_billing",
+  "license_expiry_date",
   "sync_settings_section",
   "sync_start_date",
   "refresh_endpoint",
@@ -45,45 +43,11 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "license_section",
-   "fieldtype": "Section Break",
-   "label": "License & Billing"
-  },
-  {
-   "fieldname": "license_summary",
-   "fieldtype": "HTML",
-   "label": "License Summary",
-   "options": "<div class=\"text-muted\">Loading license status...</div>"
-  },
-  {
-   "description": "Provided by ADMBit. Leave blank to use the included trial limit.",
-   "fieldname": "license_key",
-   "fieldtype": "Data",
-   "label": "License Key"
-  },
-  {
-   "default": "1",
-   "description": "Number of active bank connections included. Additional connections are billed at €15/month each.",
-   "fieldname": "allowed_connections",
-   "fieldtype": "Int",
-   "label": "Allowed Connections"
-  },
-  {
-   "fieldname": "column_break_license",
-   "fieldtype": "Column Break"
-  },
-  {
-   "description": "After this date new connections and syncs will be blocked unless the license is renewed.",
-   "fieldname": "license_expiry_date",
-   "fieldtype": "Date",
-   "label": "License Expiry Date"
-  },
-  {
    "collapsible": 1,
    "depends_on": "enabled",
    "fieldname": "credentials_section",
    "fieldtype": "Section Break",
-   "label": "Advanced Credentials"
+   "label": "Credentials"
   },
   {
    "fieldname": "api_key",
@@ -111,10 +75,34 @@
    "read_only": 1
   },
   {
-   "description": "Domain registered in the Wealthreader clients area (e.g. https://erpnext.example.com)",
+   "description": "Domain registered in the Wealthreader clients area. Defaults to the ERPNext site URL.",
    "fieldname": "widget_domain",
    "fieldtype": "Data",
    "label": "Widget Domain"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "enabled",
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing & Limits"
+  },
+  {
+   "default": "1",
+   "description": "Maximum active bank connections for this site. Additional connections are billed at €15/month each.",
+   "fieldname": "allowed_connections",
+   "fieldtype": "Int",
+   "label": "Allowed Connections"
+  },
+  {
+   "fieldname": "column_break_billing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "After this date new connections and syncs are blocked until the billing period is renewed.",
+   "fieldname": "license_expiry_date",
+   "fieldtype": "Date",
+   "label": "Billing Expiry Date"
   },
   {
    "collapsible": 1,
@@ -151,7 +139,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-07-09 12:30:00.000000",
+ "modified": "2026-07-09 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
  "name": "Wealthreader Settings",

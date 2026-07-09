@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 3}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Connections\", \"col\": 3}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 3}}, {\"id\": \"wr-shortcut-4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 3}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank Sync\", \"col\": 12}}]",
+ "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Bank Sync</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Connect Bank Account\", \"col\": 6}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Connections\", \"col\": 6}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 6}}, {\"id\": \"wr-shortcut-4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Settings\", \"col\": 6}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank Sync\", \"col\": 12}}]",
  "creation": "2026-07-08 15:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -10,7 +10,7 @@
  "icon": "money",
  "idx": 0,
  "is_hidden": 0,
- "label": "Wealthreader",
+ "label": "Bank Sync",
  "links": [
   {
    "hidden": 0,
@@ -24,8 +24,8 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Wealthreader Settings",
-   "link_to": "Wealthreader Settings",
+   "label": "Connect Bank Account",
+   "link_to": "Wealthreader Connection",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -36,16 +36,6 @@
    "is_query_report": 0,
    "label": "Wealthreader Connection",
    "link_to": "Wealthreader Connection",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Wealthreader Link Session",
-   "link_to": "Wealthreader Link Session",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -69,12 +59,22 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Wealthreader Settings",
+   "link_to": "Wealthreader Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-07-09 12:45:00.000000",
+ "modified": "2026-07-09 14:15:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
- "name": "Wealthreader",
+ "name": "Bank Sync",
  "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
@@ -84,33 +84,33 @@
  "sequence_id": 99.0,
  "shortcuts": [
   {
-   "color": "Blue",
+   "color": "Green",
    "doc_view": "List",
-   "label": "Wealthreader Settings",
-   "link_to": "Wealthreader Settings",
+   "label": "Connect Bank Account",
+   "link_to": "Wealthreader Connection",
    "type": "DocType"
   },
   {
-   "color": "Cyan",
+   "color": "Blue",
    "doc_view": "List",
    "label": "Connections",
    "link_to": "Wealthreader Connection",
    "type": "DocType"
   },
   {
-   "color": "Orange",
-   "doc_view": "List",
-   "label": "Link Sessions",
-   "link_to": "Wealthreader Link Session",
-   "type": "DocType"
-  },
-  {
-   "color": "Green",
+   "color": "Cyan",
    "doc_view": "List",
    "label": "Bank Accounts",
    "link_to": "Bank Account",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "label": "Settings",
+   "link_to": "Wealthreader Settings",
+   "type": "DocType"
   }
  ],
- "title": "Wealthreader"
+ "title": "Bank Sync"
 }

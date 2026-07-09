@@ -30,7 +30,6 @@ class WealthreaderSettings(Document):
 		enabled: DF.Check
 		environment: DF.Literal["", "sandbox", "production"]
 		license_expiry_date: DF.Date | None
-		license_key: DF.Data | None
 		refresh_endpoint: DF.Data | None
 		sync_start_date: DF.Date | None
 		widget_domain: DF.Data | None

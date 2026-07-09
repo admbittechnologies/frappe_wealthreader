@@ -2,36 +2,37 @@
 
 A Frappe app that connects ERPNext to [Wealthreader](https://www.wealthreader.com/) for automatic bank transaction synchronization, similar to the built-in Plaid integration.
 
-## Features
+## Model
 
-- **Plug-and-play setup**: Configure Wealthreader API credentials once in `Wealthreader Settings`; end users only choose a company and bank name to start linking.
-- **Per-connection licensing**: Each active bank connection is a billable unit (€15/month). Built-in connection counting and license enforcement.
-- **Wealthreader widget flow**: Launch the official widget from ERPNext to link bank accounts.
-- **Webhook callback**: Receive normalized financial data via Wealthreader callback and create/update ERPNext `Bank`, `Bank Account`, and `Bank Transaction` records.
-- **Manual and scheduled incremental synchronization**.
+ADMBit holds the Wealthreader API contract and configures each client site once. The end client only sees a **Connect Bank Account** button and their list of linked banks.
 
-## Installation
+## End-client experience
 
-```bash
-bench get-app https://github.com/admbittechnologies/frappe_wealthreader.git
-bench --site <site-name> install-app wealthreader
-```
+1. Open the **Bank Sync** workspace in ERPNext.
+2. Click **Connect Bank Account**.
+3. Select a company and bank name, then complete the Wealthreader widget flow.
+4. Bank accounts and transactions are created automatically via the callback.
+5. View and manage connections from **Bank Sync > Connections**.
 
-## Setup
+## ADMBit setup (per client site)
 
-1. Open **Wealthreader Settings** in ERPNext.
-2. Enable the integration and enter your API key and environment.
-3. Set the **Allowed Connections** count and optional **License Key / Expiry Date**.
-4. Register the displayed callback URL in the [Wealthreader clients area](https://www.wealthreader.com/clients/).
-5. Add your ERPNext site domain as the allowed widget domain.
-6. Click **Link Bank Account** and complete the widget flow.
+1. Install the app on the client bench/site.
+2. Open **Wealthreader Settings** (System Manager only).
+3. Enable the integration and enter:
+   - **API Key** from the Wealthreader clients area.
+   - **Environment** (sandbox / production).
+   - **Widget Domain** — defaults to the ERPNext site URL; update only if a custom domain is registered in Wealthreader.
+   - **Allowed Connections** — connection limit for this client.
+   - **Billing Expiry Date** — optional billing-period end date.
+4. Copy the auto-generated **Callback URL** into the Wealthreader clients area.
+5. Enable **Synchronize every hour** if desired.
 
-## Licensing
+## Billing
 
 - Each active bank connection is billed at **€15 per month**.
-- The **Allowed Connections** field in `Wealthreader Settings` controls how many connections can be active.
-- When the limit is reached or the license expires, new bank links and background syncs are blocked until the license is renewed.
-- Connection status and history are tracked in `Wealthreader Connection`.
+- **Allowed Connections** in `Wealthreader Settings` controls the site limit.
+- The **Connections** list shows the current active count and monthly cost.
+- New connections are blocked when the limit is reached or the billing period has expired.
 
 ## Synchronization
 

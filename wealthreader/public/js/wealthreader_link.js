@@ -5,7 +5,7 @@ frappe.provide("erpnext.integrations");
 
 erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 	constructor(parent) {
-		this.frm = parent;
+		this.frm = parent || {};
 		this.widgetUrl = "https://widget.wealthreader.com/js/load.js";
 		this.widgetOrigin = new URL(this.widgetUrl).origin;
 		this.init_config();
@@ -84,14 +84,20 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 
 	open_widget() {
 		const me = this;
-		me.frm.disable_form();
+		if (me.frm.disable_form) {
+			me.frm.disable_form();
+		}
 		me.loadScript(me.widgetUrl)
 			.then(() => {
-				me.frm.enable_form();
+				if (me.frm.enable_form) {
+					me.frm.enable_form();
+				}
 				me.showWidgetModal();
 			})
 			.catch((error) => {
-				me.frm.enable_form();
+				if (me.frm.enable_form) {
+					me.frm.enable_form();
+				}
 				me.onScriptError(error);
 			});
 	}
