@@ -89,6 +89,16 @@ app_include_js = "/assets/wealthreader/js/wealthreader_link.js"
 
 after_install = "wealthreader.setup.install.after_install"
 
+# Fixtures
+# --------
+
+fixtures = [
+	{
+		"doctype": "Workspace",
+		"filters": [["name", "=", "Wealthreader"]],
+	}
+]
+
 # Uninstallation
 # --------------
 

@@ -6,7 +6,7 @@ def get_data():
 		{
 			"module_name": "Wealthreader",
 			"color": "#5893F8",
-			"icon": "octicon octicon-credit-card",
+			"icon": "money",
 			"type": "module",
 			"label": _("Wealthreader"),
 		}

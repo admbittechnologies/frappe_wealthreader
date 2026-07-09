@@ -1,0 +1,107 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 4}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 4}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 4}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Configuration\", \"col\": 6}}, {\"id\": \"wr-card-2\", \"type\": \"card\", \"data\": {\"card_name\": \"Linked Data\", \"col\": 6}}]",
+ "creation": "2026-07-08 15:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "money",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Wealthreader",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Configuration",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Wealthreader Settings",
+   "link_to": "Wealthreader Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Linked Data",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Wealthreader Link Session",
+   "link_to": "Wealthreader Link Session",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Account",
+   "link_to": "Bank Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Transaction",
+   "link_to": "Bank Transaction",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-07-08 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Wealthreader",
+ "name": "Wealthreader",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 99.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "Form",
+   "label": "Wealthreader Settings",
+   "link_to": "Wealthreader Settings",
+   "type": "DocType"
+  },
+  {
+   "color": "Cyan",
+   "doc_view": "List",
+   "label": "Link Sessions",
+   "link_to": "Wealthreader Link Session",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Bank Accounts",
+   "link_to": "Bank Account",
+   "type": "DocType"
+  }
+ ],
+ "title": "Wealthreader"
+}
