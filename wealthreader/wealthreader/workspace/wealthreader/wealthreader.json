@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 4}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 4}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 4}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Configuration\", \"col\": 6}}, {\"id\": \"wr-card-2\", \"type\": \"card\", \"data\": {\"card_name\": \"Linked Data\", \"col\": 6}}]",
+ "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 4}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 4}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 4}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank Sync\", \"col\": 12}}]",
  "creation": "2026-07-08 15:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,7 +15,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Configuration",
+   "label": "Bank Sync",
    "link_count": 0,
    "onboard": 0,
    "type": "Card Break"
@@ -29,14 +29,6 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Linked Data",
-   "link_count": 0,
-   "onboard": 0,
-   "type": "Card Break"
   },
   {
    "dependencies": "",
@@ -69,7 +61,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-07-08 15:00:00.000000",
+ "modified": "2026-07-08 15:05:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
  "name": "Wealthreader",
@@ -83,7 +75,7 @@
  "shortcuts": [
   {
    "color": "Blue",
-   "doc_view": "Form",
+   "doc_view": "List",
    "label": "Wealthreader Settings",
    "link_to": "Wealthreader Settings",
    "type": "DocType"
