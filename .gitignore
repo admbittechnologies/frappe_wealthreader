@@ -1,0 +1,11 @@
+*.pyc
+__pycache__
+*.pyo
+*.egg-info
+.venv
+venv/
+node_modules/
+.yarn/
+.research/
+*.log
+.DS_Store

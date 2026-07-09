@@ -1,0 +1,13 @@
+include MANIFEST.in
+include README.md
+include license.txt
+include pyproject.toml
+recursive-include wealthreader *.csv
+recursive-include wealthreader *.html
+recursive-include wealthreader *.js
+recursive-include wealthreader *.json
+recursive-include wealthreader *.md
+recursive-include wealthreader *.py
+recursive-include wealthreader *.txt
+recursive-include wealthreader *.xml
+recursive-exclude wealthreader *.pyc

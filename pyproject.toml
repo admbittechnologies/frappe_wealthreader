@@ -1,0 +1,20 @@
+[project]
+name = "wealthreader"
+authors = [
+    { name = "ADMBit Technologies", email = "info@admbit.com" }
+]
+description = "Wealthreader bank feed integration for ERPNext"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "requests~=2.31.0"
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.frappe.testing.function_type_validation]
+# disabled for now, enable when all functions are typed
+disabled = true
