@@ -8,6 +8,12 @@
   "enabled",
   "column_break_2",
   "automatic_sync",
+  "license_section",
+  "license_summary",
+  "license_key",
+  "allowed_connections",
+  "column_break_license",
+  "license_expiry_date",
   "credentials_section",
   "api_key",
   "environment",
@@ -39,11 +45,45 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "license_section",
+   "fieldtype": "Section Break",
+   "label": "License & Billing"
+  },
+  {
+   "fieldname": "license_summary",
+   "fieldtype": "HTML",
+   "label": "License Summary",
+   "options": "<div class=\"text-muted\">Loading license status...</div>"
+  },
+  {
+   "description": "Provided by ADMBit. Leave blank to use the included trial limit.",
+   "fieldname": "license_key",
+   "fieldtype": "Data",
+   "label": "License Key"
+  },
+  {
+   "default": "1",
+   "description": "Number of active bank connections included. Additional connections are billed at €15/month each.",
+   "fieldname": "allowed_connections",
+   "fieldtype": "Int",
+   "label": "Allowed Connections"
+  },
+  {
+   "fieldname": "column_break_license",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "After this date new connections and syncs will be blocked unless the license is renewed.",
+   "fieldname": "license_expiry_date",
+   "fieldtype": "Date",
+   "label": "License Expiry Date"
+  },
+  {
    "collapsible": 1,
    "depends_on": "enabled",
    "fieldname": "credentials_section",
    "fieldtype": "Section Break",
-   "label": "Credentials"
+   "label": "Advanced Credentials"
   },
   {
    "fieldname": "api_key",
@@ -111,7 +151,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-07-08 14:30:00.000000",
+ "modified": "2026-07-09 12:30:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
  "name": "Wealthreader Settings",

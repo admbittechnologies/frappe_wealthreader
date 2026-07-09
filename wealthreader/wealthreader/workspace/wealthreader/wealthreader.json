@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 4}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 4}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 4}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank Sync\", \"col\": 12}}]",
+ "content": "[{\"id\": \"wr-header-1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Wealthreader</b></span>\", \"col\": 12}}, {\"id\": \"wr-shortcut-1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Wealthreader Settings\", \"col\": 3}}, {\"id\": \"wr-shortcut-2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Connections\", \"col\": 3}}, {\"id\": \"wr-shortcut-3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Link Sessions\", \"col\": 3}}, {\"id\": \"wr-shortcut-4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bank Accounts\", \"col\": 3}}, {\"id\": \"wr-card-1\", \"type\": \"card\", \"data\": {\"card_name\": \"Bank Sync\", \"col\": 12}}]",
  "creation": "2026-07-08 15:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -26,6 +26,16 @@
    "is_query_report": 0,
    "label": "Wealthreader Settings",
    "link_to": "Wealthreader Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Wealthreader Connection",
+   "link_to": "Wealthreader Connection",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -61,7 +71,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-07-08 15:05:00.000000",
+ "modified": "2026-07-09 12:45:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
  "name": "Wealthreader",
@@ -82,6 +92,13 @@
   },
   {
    "color": "Cyan",
+   "doc_view": "List",
+   "label": "Connections",
+   "link_to": "Wealthreader Connection",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
    "doc_view": "List",
    "label": "Link Sessions",
    "link_to": "Wealthreader Link Session",

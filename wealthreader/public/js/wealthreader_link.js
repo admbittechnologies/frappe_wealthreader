@@ -13,14 +13,20 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 
 	async init_config() {
 		const config = await this.get_widget_config();
+
 		if (!config || config.status === "disabled") {
 			frappe.throw(__("Wealthreader integration is disabled."));
+		}
+
+		if (config.status === "limit_reached") {
+			frappe.throw(config.message || __("Connection limit reached."));
 		}
 
 		this.operation_id = config.operation_id;
 		this.environment = config.environment;
 		this.default_product_types = config.default_product_types || "accounts,cards";
 		this.widget_domain = config.widget_domain;
+		this.date_from = config.date_from;
 
 		frappe.prompt(
 			[
@@ -53,14 +59,16 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 					console.error(error);
 				}
 			},
-			__("Select company and bank name"),
+			__("Link Bank Account"),
 			__("Continue")
 		);
 	}
 
 	async get_widget_config() {
-		const resp = await this.frm.call("get_widget_config");
-		return resp.message;
+		const resp = await frappe.xcall(
+			"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.get_widget_config"
+		);
+		return resp;
 	}
 
 	async create_link_session() {
@@ -129,6 +137,14 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 			wait_full_response: true,
 			product_types: me.default_product_types,
 		};
+
+		if (me.widget_domain) {
+			window.wr_conf.widget_domain = me.widget_domain;
+		}
+
+		if (me.date_from) {
+			window.wr_conf.date_from = me.date_from;
+		}
 
 		// Listen for widget messages
 		const messageHandler = (e) => {

@@ -6,7 +6,7 @@ import uuid
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_months, flt, formatdate, getdate, today
+from frappe.utils import add_months, cint, flt, formatdate, getdate, now, today
 
 from wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_connector import (
 	WealthreaderConnector,
@@ -22,12 +22,15 @@ class WealthreaderSettings(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		allowed_connections: DF.Int
 		api_key: DF.Password | None
 		automatic_sync: DF.Check
 		callback_url: DF.Data | None
 		default_product_types: DF.Data | None
 		enabled: DF.Check
 		environment: DF.Literal["", "sandbox", "production"]
+		license_expiry_date: DF.Date | None
+		license_key: DF.Data | None
 		refresh_endpoint: DF.Data | None
 		sync_start_date: DF.Date | None
 		widget_domain: DF.Data | None
@@ -39,12 +42,47 @@ class WealthreaderSettings(Document):
 				frappe.throw(_("API Key is required when Wealthreader is enabled."))
 			if not self.environment:
 				frappe.throw(_("Environment is required when Wealthreader is enabled."))
-			self.callback_url = self.get_callback_url()
+			if cint(self.allowed_connections) < 0:
+				frappe.throw(_("Allowed Connections cannot be negative."))
+		self.callback_url = self.get_callback_url()
 
 	def get_callback_url(self):
 		return frappe.utils.get_url(
 			"/api/method/wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.callback"
 		)
+
+	def get_active_connections_count(self):
+		return frappe.db.count("Wealthreader Connection", {"status": "Active"})
+
+	def is_license_valid(self):
+		if not self.enabled:
+			return False, _("Wealthreader integration is disabled.")
+
+		if self.license_expiry_date and getdate(self.license_expiry_date) < today():
+			return False, _(
+				"Your Wealthreader license expired on {0}. Please renew it to continue."
+			).format(formatdate(self.license_expiry_date))
+
+		return True, ""
+
+	def can_add_connection(self):
+		valid, message = self.is_license_valid()
+		if not valid:
+			return valid, message
+
+		allowed = cint(self.allowed_connections)
+		if allowed <= 0:
+			return False, _(
+				"No connections are allowed under the current license. Contact your administrator."
+			)
+
+		active = self.get_active_connections_count()
+		if active >= allowed:
+			return False, _(
+				"Connection limit reached ({0}/{1}). Add more connections at €15/month each."
+			).format(active, allowed)
+
+		return True, ""
 
 	@staticmethod
 	@frappe.whitelist()
@@ -53,12 +91,49 @@ class WealthreaderSettings(Document):
 		if not settings.enabled:
 			return {"status": "disabled"}
 
+		allowed, message = settings.can_add_connection()
+		if not allowed:
+			return {"status": "limit_reached", "message": message}
+
+		date_from = None
+		if settings.sync_start_date:
+			date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
+
 		return {
 			"operation_id": str(uuid.uuid4()),
 			"widget_domain": settings.widget_domain,
 			"default_product_types": settings.default_product_types or "accounts,cards",
 			"environment": settings.environment,
+			"date_from": date_from,
 		}
+
+
+@frappe.whitelist()
+def get_license_summary():
+	settings = frappe.get_single("Wealthreader Settings")
+	active = settings.get_active_connections_count()
+	allowed = cint(settings.allowed_connections)
+
+	status = "Active"
+	if not settings.enabled:
+		status = "Disabled"
+	elif settings.license_expiry_date and getdate(settings.license_expiry_date) < today():
+		status = "Expired"
+	elif allowed <= 0:
+		status = "No License"
+	elif active >= allowed:
+		status = "Limit Reached"
+
+	can_add, message = settings.can_add_connection()
+
+	return {
+		"active_connections": active,
+		"allowed_connections": allowed,
+		"license_status": status,
+		"expiry_date": formatdate(settings.license_expiry_date) if settings.license_expiry_date else None,
+		"can_add_connection": can_add,
+		"message": message,
+	}
 
 
 @frappe.whitelist(methods=["POST"])
@@ -66,6 +141,11 @@ def create_link_session(operation_id: str, company: str, bank_name: str):
 	"""Create a Link Session before opening the widget so the callback can map operation_id."""
 	if not operation_id or not company or not bank_name:
 		frappe.throw(_("operation_id, company and bank_name are required"))
+
+	settings = frappe.get_single("Wealthreader Settings")
+	allowed, message = settings.can_add_connection()
+	if not allowed:
+		frappe.throw(message)
 
 	session = frappe.get_doc(
 		{
@@ -178,7 +258,8 @@ def process_callback(payload, session):
 	if not isinstance(data, dict):
 		frappe.throw(_("Invalid Wealthreader callback payload"))
 
-	token = _statistics.get("token") if isinstance(_statistics, dict) else None
+	statistics = _statistics if isinstance(_statistics, dict) else {}
+	token = statistics.get("token")
 	if not token:
 		frappe.throw(_("Wealthreader callback missing statistics.token"))
 
@@ -188,6 +269,7 @@ def process_callback(payload, session):
 		frappe.throw(_("Could not determine Company for Wealthreader callback."))
 
 	bank = add_or_update_bank(bank_name, token)
+	add_or_update_connection(bank_name, company, token)
 	add_bank_accounts(data, bank, company)
 	frappe.db.commit()
 
@@ -221,6 +303,47 @@ def add_or_update_bank(bank_name, token=None):
 			).format(bank_name),
 			title=_("Wealthreader Link Failed"),
 		)
+
+
+def add_or_update_connection(bank_name, company, token):
+	"""Create or update the Wealthreader Connection for a linked institution."""
+	frappe.db.savepoint("wr_connection")
+	try:
+		existing = frappe.db.exists(
+			"Wealthreader Connection", {"bank": bank_name, "company": company}
+		)
+		if existing:
+			conn = frappe.get_doc("Wealthreader Connection", existing)
+			conn.token = token
+			conn.status = "Active"
+			conn.license_status = _get_connection_license_status()
+			conn.last_sync = now()
+		else:
+			conn = frappe.get_doc(
+				{
+					"doctype": "Wealthreader Connection",
+					"bank": bank_name,
+					"company": company,
+					"token": token,
+					"status": "Active",
+					"license_status": _get_connection_license_status(),
+					"linked_date": today(),
+					"last_sync": now(),
+				}
+			)
+		conn.save(ignore_permissions=True)
+		return conn
+	except Exception:
+		frappe.db.rollback(save_point="wr_connection")
+		frappe.log_error("Wealthreader Connection creation error")
+		raise
+
+
+def _get_connection_license_status():
+	settings = frappe.get_single("Wealthreader Settings")
+	if settings.license_expiry_date and getdate(settings.license_expiry_date) < today():
+		return "Expired"
+	return "Licensed"
 
 
 @frappe.whitelist(methods=["POST"])
@@ -382,7 +505,7 @@ def _upsert_bank_account(
 
 
 @frappe.whitelist()
-def sync_transactions(bank, bank_account):
+def sync_transactions(bank, bank_account, connection_name=None):
 	"""Sync incremental transactions for a linked bank account."""
 	try:
 		last_transaction_date = frappe.db.get_value(
@@ -399,8 +522,7 @@ def sync_transactions(bank, bank_account):
 
 		end_date = formatdate(today(), "YYYY-MM-dd")
 
-		bank_doc = frappe.get_doc("Bank", bank)
-		access_token = bank_doc.get_password("wealthreader_token")
+		access_token = _get_access_token(bank, connection_name)
 		if not access_token:
 			frappe.throw(_("Wealthreader token not found for Bank {0}").format(bank))
 
@@ -460,12 +582,83 @@ def sync_transactions(bank, bank_account):
 				"Bank Account", bank_account, "last_integration_date", last_transaction_date
 			)
 
+		if connection_name:
+			frappe.db.set_value("Wealthreader Connection", connection_name, "last_sync", now())
+
 		frappe.logger().info(
 			f"Wealthreader added {len(result)} new Bank Transactions from '{bank_account}' between {start_date} and {end_date}"
 		)
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("Wealthreader transactions sync error"))
 		raise
+
+
+def _get_access_token(bank, connection_name=None):
+	"""Resolve the Wealthreader token from the Connection record or the Bank fallback."""
+	if connection_name:
+		conn = frappe.get_doc("Wealthreader Connection", connection_name)
+		if conn.token:
+			return conn.get_password("token")
+
+	bank_doc = frappe.get_doc("Bank", bank)
+	if bank_doc.wealthreader_token:
+		return bank_doc.get_password("wealthreader_token")
+
+	return None
+
+
+@frappe.whitelist()
+def enqueue_synchronization():
+	"""Queue sync jobs for all active Wealthreader connections."""
+	settings = frappe.get_single("Wealthreader Settings")
+	valid, message = settings.is_license_valid()
+	if not valid:
+		frappe.throw(message)
+
+	connections = frappe.get_all(
+		"Wealthreader Connection",
+		filters={"status": "Active"},
+		fields=["name", "bank", "company"],
+	)
+
+	for connection in connections:
+		bank_accounts = frappe.get_all(
+			"Bank Account",
+			filters={
+				"bank": connection.bank,
+				"company": connection.company,
+				"integration_id": ["!=", ""],
+				"wealthreader_source": ["is", "set"],
+			},
+			fields=["name"],
+		)
+		for bank_account in bank_accounts:
+			frappe.enqueue(
+				"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.sync_transactions",
+				bank=connection.bank,
+				bank_account=bank_account.name,
+				connection_name=connection.name,
+			)
+
+
+def automatic_synchronization():
+	"""Entry point for the hourly scheduler."""
+	settings = frappe.get_single("Wealthreader Settings")
+	if settings.enabled and settings.automatic_sync:
+		enqueue_synchronization()
+
+
+def _ensure_account_subtype(account_subtype):
+	"""Create Bank Account Subtype master record if it does not exist."""
+	if not account_subtype:
+		return
+	if not frappe.db.exists("Bank Account Subtype", account_subtype):
+		try:
+			frappe.get_doc(
+				{"doctype": "Bank Account Subtype", "account_subtype": account_subtype}
+			).insert()
+		except frappe.DuplicateEntryError:
+			pass
 
 
 def new_bank_transaction(transaction, account_uuid, source):
@@ -543,47 +736,3 @@ def new_bank_transaction(transaction, account_uuid, source):
 		frappe.throw(_("Bank transaction creation error"))
 
 	return result
-
-
-@frappe.whitelist()
-def enqueue_synchronization():
-	"""Queue sync jobs for all bank accounts linked via Wealthreader."""
-	settings = frappe.get_single("Wealthreader Settings")
-	if not settings.enabled:
-		frappe.throw(_("Wealthreader integration is disabled."))
-
-	linked_accounts = frappe.get_all(
-		"Bank Account",
-		filters={
-			"integration_id": ["!=", ""],
-			"wealthreader_source": ["is", "set"],
-		},
-		fields=["name", "bank"],
-	)
-
-	for linked_account in linked_accounts:
-		frappe.enqueue(
-			"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.sync_transactions",
-			bank=linked_account.bank,
-			bank_account=linked_account.name,
-		)
-
-
-def automatic_synchronization():
-	"""Entry point for the hourly scheduler."""
-	settings = frappe.get_single("Wealthreader Settings")
-	if settings.enabled and settings.automatic_sync:
-		enqueue_synchronization()
-
-
-def _ensure_account_subtype(account_subtype):
-	"""Create Bank Account Subtype master record if it does not exist."""
-	if not account_subtype:
-		return
-	if not frappe.db.exists("Bank Account Subtype", account_subtype):
-		try:
-			frappe.get_doc(
-				{"doctype": "Bank Account Subtype", "account_subtype": account_subtype}
-			).insert()
-		except frappe.DuplicateEntryError:
-			pass
