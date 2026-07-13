@@ -4,7 +4,7 @@ A Frappe app that connects ERPNext to [Wealthreader](https://www.wealthreader.co
 
 ## Model
 
-ADMBit holds the Wealthreader API contract and provisions each client site once. The end client only sees a **Connect Bank Account** button and their list of linked banks. The Wealthreader API key is never exposed in the ERPNext UI.
+ADMBit holds the Wealthreader API contract in a central **Wealthreader Hub**. Each client site activates itself with an activation key and receives the API credentials from the hub. The end client never sees the API key.
 
 ## End-client experience
 
@@ -14,46 +14,29 @@ ADMBit holds the Wealthreader API contract and provisions each client site once.
 4. Bank accounts and transactions are created automatically via the callback.
 5. View and manage connections from **Bank Sync > Connections**.
 
-## ADMBit setup (per client site)
+## Client setup
 
-The Wealthreader API key is provisioned outside the ERPNext UI so the client never sees it.
-
-### 1. Set the API key
-
-Use one of the following methods (in order of preference):
-
-**Site config (recommended)**
-
-```bash
-bench --site <site-name> set-config wealthreader_api_key "<ADMBit API key>"
-```
-
-**Environment variable**
-
-```bash
-export WEALTHREADER_API_KEY="<ADMBit API key>"
-```
-
-### 2. Configure the integration
-
-Open **Wealthreader Settings** (System Manager only) and set:
-
-- **Environment** (sandbox / production)
-- **Widget Domain** — defaults to the ERPNext site URL; update only if a custom domain is registered in Wealthreader
-- **Allowed Connections** — connection limit for this client
-- **Billing Expiry Date** — optional billing-period end date
-- **Synchronize every hour** if desired
-
-### 3. Register the callback URL
-
-Copy the auto-generated **Callback URL** from `Wealthreader Settings` into the Wealthreader clients area.
+1. Install the app on the client bench/site.
+2. Open **Wealthreader Settings** (System Manager only).
+3. Enter:
+   - **Hub URL** — your ADMBit Wealthreader Hub instance, e.g. `https://hub.admbit.com`
+   - **Activation Key** — provided by ADMBit
+4. Save. The app calls the hub and auto-fills:
+   - Wealthreader API key (hidden)
+   - Environment
+   - Widget domain
+   - Allowed connections
+   - Billing expiry date
+5. Copy the auto-generated **Callback URL** into the Wealthreader clients area.
+6. Enable **Synchronize every hour** if desired.
 
 ## Billing
 
 - Each active bank connection is billed at **€15 per month**.
-- **Allowed Connections** in `Wealthreader Settings` controls the site limit.
+- **Allowed Connections** is set by the ADMBit Hub during activation.
 - The **Connections** list shows the current active count and monthly cost.
 - New connections are blocked when the limit is reached or the billing period has expired.
+- The app sends a daily signed usage report to the hub for centralized invoicing.
 
 ## Synchronization
 
@@ -72,7 +55,7 @@ Other Wealthreader product types (loans, deposits, leases, portfolios, etc.) are
 
 ## Security notes
 
-- The API key is read from site config or an environment variable and is **never stored in an ERPNext DocType field**.
+- The API key is fetched from the ADMBit Hub during activation and stored encrypted. It is **never visible in the ERPNext UI**.
 - The callback endpoint is `allow_guest` because Wealthreader POSTs to it from their servers. It immediately switches to Administrator context, but **only processes payloads that match a pending `Wealthreader Link Session`** created from the ERPNext UI.
 - The Wealthreader token is stored encrypted (Password field) on both the `Bank` DocType and the `Wealthreader Connection` DocType.
 - `postMessage` events from the widget iframe are validated against the Wealthreader widget origin.

@@ -157,6 +157,9 @@ fixtures = [
 scheduler_events = {
 	"hourly": [
 		"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.automatic_synchronization"
+	],
+	"daily": [
+		"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.report_usage"
 	]
 }
 

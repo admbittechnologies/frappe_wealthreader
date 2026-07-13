@@ -8,9 +8,12 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_months, cint, flt, formatdate, getdate, now, today
 
+import os
+
+import requests
+
 from wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_connector import (
 	WealthreaderConnector,
-	get_api_key,
 )
 
 
@@ -23,12 +26,16 @@ class WealthreaderSettings(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		activation_key: DF.Data | None
+		activation_status: DF.SmallText | None
 		allowed_connections: DF.Int
+		api_key: DF.Password | None
 		automatic_sync: DF.Check
 		callback_url: DF.Data | None
 		default_product_types: DF.Data | None
 		enabled: DF.Check
 		environment: DF.Literal["", "sandbox", "production"]
+		hub_url: DF.Data | None
 		license_expiry_date: DF.Date | None
 		refresh_endpoint: DF.Data | None
 		sync_start_date: DF.Date | None
@@ -39,20 +46,77 @@ class WealthreaderSettings(Document):
 		if self.enabled:
 			if not self.environment:
 				frappe.throw(_("Environment is required when Wealthreader is enabled."))
-			if not get_api_key():
+			if not self.get_password("api_key"):
 				frappe.throw(
 					_(
-						"Wealthreader API key is not configured. Please ask ADMBit to provision it via site configuration."
+						"Wealthreader API key is not configured. Please run activation or ask ADMBit to provision it."
 					)
 				)
 			if cint(self.allowed_connections) < 0:
 				frappe.throw(_("Allowed Connections cannot be negative."))
+
 		self.callback_url = self.get_callback_url()
+
+		if self.hub_url and self.activation_key and not self.get_password("api_key"):
+			self.run_activation()
 
 	def get_callback_url(self):
 		return frappe.utils.get_url(
 			"/api/method/wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.callback"
 		)
+
+	def run_activation(self):
+		"""Call the ADMBit Hub to exchange the activation key for API credentials."""
+		url = self.hub_url.rstrip("/") + "/api/method/wealthreader_hub.wealthreader_hub.api.activate"
+		payload = {
+			"activation_key": self.activation_key,
+			"site_url": frappe.utils.get_url(),
+			"site_name": frappe.local.site,
+		}
+
+		try:
+			response = requests.post(url, json=payload, timeout=30)
+			response.raise_for_status()
+			result = response.json()
+		except Exception as e:
+			self.activation_status = f"Activation failed: {str(e)}"
+			frappe.log_error("Wealthreader activation error", _("Wealthreader Activation"))
+			return
+
+		if result.get("status") != "ok" or not result.get("data"):
+			self.activation_status = f"Activation failed: {result.get('message', 'Unknown error')}"
+			return
+
+		data = result["data"]
+		self.api_key = data.get("api_key")
+		self.environment = data.get("environment")
+		self.widget_domain = data.get("widget_domain") or frappe.utils.get_url()
+		self.allowed_connections = cint(data.get("allowed_connections"))
+		if data.get("expiry_date"):
+			self.license_expiry_date = getdate(data["expiry_date"])
+		self.activation_status = "Activated successfully."
+
+	@frappe.whitelist()
+	def report_usage_to_hub(self):
+		"""Send today's active connection count to the ADMBit Hub."""
+		if not self.hub_url or not self.activation_key:
+			return
+
+		active = self.get_active_connections_count()
+		payload = {
+			"activation_key": self.activation_key,
+			"report_date": str(today()),
+			"active_connections": active,
+			"site_url": frappe.utils.get_url(),
+		}
+
+		url = self.hub_url.rstrip("/") + "/api/method/wealthreader_hub.wealthreader_hub.api.report_usage"
+		try:
+			response = requests.post(url, json=payload, timeout=30)
+			response.raise_for_status()
+			return response.json()
+		except Exception as e:
+			frappe.log_error(f"Wealthreader usage report failed: {str(e)}", _("Wealthreader Usage Report"))
 
 	def get_active_connections_count(self):
 		return frappe.db.count("Wealthreader Connection", {"status": "Active"})
@@ -60,6 +124,11 @@ class WealthreaderSettings(Document):
 	def is_license_valid(self):
 		if not self.enabled:
 			return False, _("Wealthreader integration is disabled.")
+
+		if not self.get_password("api_key"):
+			return False, _(
+				"Wealthreader is not activated. Please enter the activation key provided by ADMBit."
+			)
 
 		if self.license_expiry_date and getdate(self.license_expiry_date) < today():
 			return False, _(
@@ -102,9 +171,11 @@ class WealthreaderSettings(Document):
 		if settings.sync_start_date:
 			date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
 
+		widget_domain = settings.widget_domain or frappe.utils.get_url()
+
 		return {
 			"operation_id": str(uuid.uuid4()),
-			"widget_domain": settings.widget_domain,
+			"widget_domain": widget_domain,
 			"default_product_types": settings.default_product_types or "accounts,cards",
 			"environment": settings.environment,
 			"date_from": date_from,
@@ -120,6 +191,8 @@ def get_license_summary():
 	status = "Active"
 	if not settings.enabled:
 		status = "Disabled"
+	elif not settings.get_password("api_key"):
+		status = "Not Activated"
 	elif settings.license_expiry_date and getdate(settings.license_expiry_date) < today():
 		status = "Expired"
 	elif allowed <= 0:
@@ -649,6 +722,13 @@ def automatic_synchronization():
 	settings = frappe.get_single("Wealthreader Settings")
 	if settings.enabled and settings.automatic_sync:
 		enqueue_synchronization()
+
+
+def report_usage():
+	"""Entry point for the daily usage-report scheduler."""
+	settings = frappe.get_single("Wealthreader Settings")
+	if settings.enabled and settings.hub_url and settings.activation_key:
+		settings.report_usage_to_hub()
 
 
 def _ensure_account_subtype(account_subtype):

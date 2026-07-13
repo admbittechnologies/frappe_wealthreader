@@ -8,10 +8,13 @@
   "enabled",
   "column_break_2",
   "automatic_sync",
-  "credentials_section",
-  "api_key_note",
+  "activation_section",
+  "hub_url",
+  "activation_key",
+  "activation_status",
+  "column_break_activation",
+  "api_key",
   "environment",
-  "column_break_7",
   "callback_url",
   "widget_domain",
   "billing_section",
@@ -43,29 +46,45 @@
    "fieldtype": "Column Break"
   },
   {
-   "collapsible": 1,
-   "depends_on": "enabled",
-   "fieldname": "credentials_section",
+   "fieldname": "activation_section",
    "fieldtype": "Section Break",
-   "label": "Credentials"
+   "label": "Activation"
   },
   {
-   "fieldname": "api_key_note",
-   "fieldtype": "HTML",
-   "label": "API Key Note",
-   "options": "<div class=\"text-muted\">The Wealthreader API key is provisioned by ADMBit via site configuration and is not shown here.</div>"
+   "description": "URL of the ADMBit Wealthreader Hub instance, e.g. https://hub.admbit.com",
+   "fieldname": "hub_url",
+   "fieldtype": "Data",
+   "label": "Hub URL"
+  },
+  {
+   "description": "Activation key provided by ADMBit.",
+   "fieldname": "activation_key",
+   "fieldtype": "Data",
+   "label": "Activation Key"
+  },
+  {
+   "fieldname": "activation_status",
+   "fieldtype": "Small Text",
+   "label": "Activation Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_activation",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "Wealthreader API Key",
+   "read_only": 1
   },
   {
    "fieldname": "environment",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Environment",
    "options": "sandbox\nproduction",
-   "mandatory_depends_on": "enabled"
-  },
-  {
-   "fieldname": "column_break_7",
-   "fieldtype": "Column Break"
+   "read_only": 1
   },
   {
    "fieldname": "callback_url",
@@ -88,10 +107,11 @@
   },
   {
    "default": "1",
-   "description": "Maximum active bank connections for this site. Additional connections are billed at €15/month each.",
+   "description": "Maximum active bank connections for this site. Set by the ADMBit Hub during activation.",
    "fieldname": "allowed_connections",
    "fieldtype": "Int",
-   "label": "Allowed Connections"
+   "label": "Allowed Connections",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_billing",
@@ -101,7 +121,8 @@
    "description": "After this date new connections and syncs are blocked until the billing period is renewed.",
    "fieldname": "license_expiry_date",
    "fieldtype": "Date",
-   "label": "Billing Expiry Date"
+   "label": "Billing Expiry Date",
+   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -138,7 +159,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-07-09 14:00:00.000000",
+ "modified": "2026-07-09 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "Wealthreader",
  "name": "Wealthreader Settings",
