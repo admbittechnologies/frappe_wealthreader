@@ -30,11 +30,7 @@ required_apps = ["frappe/erpnext"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/quickbanks/css/quickbanks.css"
-app_include_js = [
-	"/assets/quickbanks/js/quickbanks_widget.js",
-	"/assets/quickbanks/js/quickbanks_link.js",
-	"/assets/quickbanks/js/connect_bank_account.js",
-]
+app_include_js = "quickbanks.bundle.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/quickbanks/css/quickbanks.css"
