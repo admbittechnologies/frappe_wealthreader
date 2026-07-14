@@ -25,8 +25,8 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Connect Bank Account",
-   "link_to": "QuickBanks Connection",
-   "link_type": "DocType",
+   "link_to": "Connect Bank Account",
+   "link_type": "Page",
    "onboard": 0,
    "type": "Link"
   },
@@ -51,7 +51,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-07-09 17:00:00.000000",
+ "modified": "2026-07-14 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "QuickBanks",
  "name": "Bank Sync",
@@ -65,10 +65,10 @@
  "shortcuts": [
   {
    "color": "Green",
-   "doc_view": "List",
+   "doc_view": "",
    "label": "Connect Bank Account",
-   "link_to": "QuickBanks Connection",
-   "type": "DocType"
+   "link_to": "Connect Bank Account",
+   "type": "Page"
   },
   {
    "color": "Blue",

@@ -82,11 +82,13 @@
   {
    "fieldname": "environment",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Environment",
    "options": "sandbox\nproduction",
    "read_only": 1
   },
   {
+   "description": "This URL must be registered in the Wealthreader clients area. The Hub tries to register it automatically during activation.",
    "fieldname": "callback_url",
    "fieldtype": "Data",
    "label": "Callback URL",
@@ -96,13 +98,16 @@
    "description": "Domain registered in the Wealthreader clients area. Defaults to the ERPNext site URL.",
    "fieldname": "widget_domain",
    "fieldtype": "Data",
-   "label": "Widget Domain"
+   "hidden": 1,
+   "label": "Widget Domain",
+   "read_only": 1
   },
   {
    "collapsible": 1,
    "depends_on": "enabled",
    "fieldname": "billing_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Billing & Limits"
   },
   {
@@ -110,17 +115,20 @@
    "description": "Maximum active bank connections for this site. Set by the ADMBit Hub during activation.",
    "fieldname": "allowed_connections",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Allowed Connections",
    "read_only": 1
   },
   {
    "fieldname": "column_break_billing",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "hidden": 1
   },
   {
    "description": "After this date new connections and syncs are blocked until the billing period is renewed.",
    "fieldname": "license_expiry_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Billing Expiry Date",
    "read_only": 1
   },

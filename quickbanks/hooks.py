@@ -19,7 +19,7 @@ required_apps = ["frappe/erpnext"]
 # 	{
 # 		"name": "quickbanks",
 # 		"logo": "/assets/quickbanks/logo.png",
-# 		"title": "Wealthreader",
+# 		"title": "QuickBanks",
 # 		"route": "/quickbanks",
 # 		"has_permission": "quickbanks.api.permission.has_app_permission",
 # 	}
@@ -30,7 +30,10 @@ required_apps = ["frappe/erpnext"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/quickbanks/css/quickbanks.css"
-app_include_js = "/assets/quickbanks/js/quickbanks_link.js"
+app_include_js = [
+	"/assets/quickbanks/js/quickbanks_widget.js",
+	"/assets/quickbanks/js/quickbanks_link.js",
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/quickbanks/css/quickbanks.css"
@@ -96,7 +99,11 @@ fixtures = [
 	{
 		"doctype": "Workspace",
 		"filters": [["name", "=", "Bank Sync"]],
-	}
+	},
+	{
+		"doctype": "Page",
+		"filters": [["name", "=", "Connect Bank Account"]],
+	},
 ]
 
 # Uninstallation
