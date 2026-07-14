@@ -25,7 +25,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Connect Bank Account",
-   "link_to": "Wealthreader Connection",
+   "link_to": "QuickBanks Connection",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -34,8 +34,8 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Wealthreader Connection",
-   "link_to": "Wealthreader Connection",
+   "label": "QuickBanks Connection",
+   "link_to": "QuickBanks Connection",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -64,8 +64,8 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Wealthreader Settings",
-   "link_to": "Wealthreader Settings",
+   "label": "QuickBanks Settings",
+   "link_to": "QuickBanks Settings",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -73,7 +73,7 @@
  ],
  "modified": "2026-07-09 14:15:00.000000",
  "modified_by": "Administrator",
- "module": "Wealthreader",
+ "module": "QuickBanks",
  "name": "Bank Sync",
  "number_cards": [],
  "owner": "Administrator",
@@ -87,14 +87,14 @@
    "color": "Green",
    "doc_view": "List",
    "label": "Connect Bank Account",
-   "link_to": "Wealthreader Connection",
+   "link_to": "QuickBanks Connection",
    "type": "DocType"
   },
   {
    "color": "Blue",
    "doc_view": "List",
    "label": "Connections",
-   "link_to": "Wealthreader Connection",
+   "link_to": "QuickBanks Connection",
    "type": "DocType"
   },
   {
@@ -108,7 +108,7 @@
    "color": "Grey",
    "doc_view": "",
    "label": "Settings",
-   "link_to": "Wealthreader Settings",
+   "link_to": "QuickBanks Settings",
    "type": "DocType"
   }
  ],

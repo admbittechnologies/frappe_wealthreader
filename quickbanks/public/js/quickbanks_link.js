@@ -3,7 +3,7 @@
 
 frappe.provide("erpnext.integrations");
 
-erpnext.integrations.wealthreaderLink = class wealthreaderLink {
+erpnext.integrations.quickbanksLink = class quickbanksLink {
 	constructor(parent) {
 		this.frm = parent || {};
 		this.widgetUrl = "https://widget.wealthreader.com/js/load.js";
@@ -15,7 +15,7 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 		const config = await this.get_widget_config();
 
 		if (!config || config.status === "disabled") {
-			frappe.throw(__("Wealthreader integration is disabled."));
+			frappe.throw(__("QuickBanks integration is disabled."));
 		}
 
 		if (config.status === "limit_reached") {
@@ -54,7 +54,7 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 					this.open_widget();
 				} catch (error) {
 					frappe.msgprint(
-						__("Could not start the Wealthreader linking session. Check Error Log for details.")
+						__("Could not start the QuickBanks linking session. Check Error Log for details.")
 					);
 					console.error(error);
 				}
@@ -66,14 +66,14 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 
 	async get_widget_config() {
 		const resp = await frappe.xcall(
-			"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.get_widget_config"
+			"quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.get_widget_config"
 		);
 		return resp;
 	}
 
 	async create_link_session() {
 		await frappe.xcall(
-			"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.create_link_session",
+			"quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.create_link_session",
 			{
 				operation_id: this.operation_id,
 				company: this.company,
@@ -123,7 +123,7 @@ erpnext.integrations.wealthreaderLink = class wealthreaderLink {
 		const me = this;
 
 		const dialog = new frappe.ui.Dialog({
-			title: __("Link Bank Account with Wealthreader"),
+			title: __("Link Bank Account"),
 			fields: [
 				{
 					fieldname: "widget_html",

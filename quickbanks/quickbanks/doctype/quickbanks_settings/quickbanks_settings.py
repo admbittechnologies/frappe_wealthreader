@@ -12,12 +12,12 @@ import os
 
 import requests
 
-from wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_connector import (
+from quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_connector import (
 	WealthreaderConnector,
 )
 
 
-class WealthreaderSettings(Document):
+class QuickBanksSettings(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -45,7 +45,7 @@ class WealthreaderSettings(Document):
 	def validate(self):
 		if self.enabled:
 			if not self.environment:
-				frappe.throw(_("Environment is required when Wealthreader is enabled."))
+				frappe.throw(_("Environment is required when QuickBanks is enabled."))
 			if not self.get_password("api_key"):
 				frappe.throw(
 					_(
@@ -62,7 +62,7 @@ class WealthreaderSettings(Document):
 
 	def get_callback_url(self):
 		return frappe.utils.get_url(
-			"/api/method/wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.callback"
+			"/api/method/quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.callback"
 		)
 
 	def run_activation(self):
@@ -80,7 +80,7 @@ class WealthreaderSettings(Document):
 			result = response.json()
 		except Exception as e:
 			self.activation_status = f"Activation failed: {str(e)}"
-			frappe.log_error("Wealthreader activation error", _("Wealthreader Activation"))
+			frappe.log_error("QuickBanks activation error", _("QuickBanks Activation"))
 			return
 
 		if result.get("status") != "ok" or not result.get("data"):
@@ -116,23 +116,23 @@ class WealthreaderSettings(Document):
 			response.raise_for_status()
 			return response.json()
 		except Exception as e:
-			frappe.log_error(f"Wealthreader usage report failed: {str(e)}", _("Wealthreader Usage Report"))
+			frappe.log_error(f"QuickBanks usage report failed: {str(e)}", _("QuickBanks Usage Report"))
 
 	def get_active_connections_count(self):
-		return frappe.db.count("Wealthreader Connection", {"status": "Active"})
+		return frappe.db.count("QuickBanks Connection", {"status": "Active"})
 
 	def is_license_valid(self):
 		if not self.enabled:
-			return False, _("Wealthreader integration is disabled.")
+			return False, _("QuickBanks integration is disabled.")
 
 		if not self.get_password("api_key"):
 			return False, _(
-				"Wealthreader is not activated. Please enter the activation key provided by ADMBit."
+				"QuickBanks is not activated. Please enter the activation key provided by ADMBit."
 			)
 
 		if self.license_expiry_date and getdate(self.license_expiry_date) < today():
 			return False, _(
-				"Your Wealthreader license expired on {0}. Please renew it to continue."
+				"Your QuickBanks license expired on {0}. Please renew it to continue."
 			).format(formatdate(self.license_expiry_date))
 
 		return True, ""
@@ -159,7 +159,7 @@ class WealthreaderSettings(Document):
 	@staticmethod
 	@frappe.whitelist()
 	def get_widget_config():
-		settings = frappe.get_single("Wealthreader Settings")
+		settings = frappe.get_single("QuickBanks Settings")
 		if not settings.enabled:
 			return {"status": "disabled"}
 
@@ -184,7 +184,7 @@ class WealthreaderSettings(Document):
 
 @frappe.whitelist()
 def get_license_summary():
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	active = settings.get_active_connections_count()
 	allowed = cint(settings.allowed_connections)
 
@@ -218,14 +218,14 @@ def create_link_session(operation_id: str, company: str, bank_name: str):
 	if not operation_id or not company or not bank_name:
 		frappe.throw(_("operation_id, company and bank_name are required"))
 
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	allowed, message = settings.can_add_connection()
 	if not allowed:
 		frappe.throw(message)
 
 	session = frappe.get_doc(
 		{
-			"doctype": "Wealthreader Link Session",
+			"doctype": "QuickBanks Link Session",
 			"operation_id": operation_id,
 			"company": company,
 			"bank_name": bank_name,
@@ -244,7 +244,7 @@ def callback():
 	server-to-server webhook that must create core ERPNext documents.
 
 	Security notes:
-	- Only payloads with a matching pending `Wealthreader Link Session` are accepted.
+	- Only payloads with a matching pending `QuickBanks Link Session` are accepted.
 	- If Wealthreader supports webhook signatures, add verification here before
 	  the session lookup.
 	"""
@@ -267,7 +267,7 @@ def _callback_handler():
 		frappe.log_error("Wealthreader callback body is not a JSON object", _("Wealthreader Callback"))
 		return _callback_response()
 
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	if not settings.enabled:
 		frappe.log_error("Wealthreader callback received while integration is disabled")
 		return _callback_response()
@@ -311,14 +311,14 @@ def _get_link_session(operation_id):
 	if not operation_id:
 		return None
 	sessions = frappe.get_all(
-		"Wealthreader Link Session",
+		"QuickBanks Link Session",
 		filters={"operation_id": operation_id},
 		fields=["name", "company", "bank_name", "status"],
 		limit=1,
 		order_by="creation desc",
 	)
 	if sessions:
-		return frappe.get_doc("Wealthreader Link Session", sessions[0].name)
+		return frappe.get_doc("QuickBanks Link Session", sessions[0].name)
 	return None
 
 
@@ -362,12 +362,12 @@ def add_or_update_bank(bank_name, token=None):
 		if not frappe.db.exists("Bank", bank_name):
 			bank = frappe.get_doc({"doctype": "Bank", "bank_name": bank_name})
 			if token:
-				bank.wealthreader_token = token
+				bank.quickbanks_token = token
 			bank.insert()
 		else:
 			bank = frappe.get_doc("Bank", bank_name)
 			if token:
-				bank.wealthreader_token = token
+				bank.quickbanks_token = token
 				bank.save()
 		return bank
 	except Exception:
@@ -377,19 +377,19 @@ def add_or_update_bank(bank_name, token=None):
 			_(
 				"There was an error creating or updating Bank {0} while linking with Wealthreader."
 			).format(bank_name),
-			title=_("Wealthreader Link Failed"),
+			title=_("QuickBanks Link Failed"),
 		)
 
 
 def add_or_update_connection(bank_name, company, token):
-	"""Create or update the Wealthreader Connection for a linked institution."""
+	"""Create or update the QuickBanks Connection for a linked institution."""
 	frappe.db.savepoint("wr_connection")
 	try:
 		existing = frappe.db.exists(
-			"Wealthreader Connection", {"bank": bank_name, "company": company}
+			"QuickBanks Connection", {"bank": bank_name, "company": company}
 		)
 		if existing:
-			conn = frappe.get_doc("Wealthreader Connection", existing)
+			conn = frappe.get_doc("QuickBanks Connection", existing)
 			conn.token = token
 			conn.status = "Active"
 			conn.license_status = _get_connection_license_status()
@@ -397,7 +397,7 @@ def add_or_update_connection(bank_name, company, token):
 		else:
 			conn = frappe.get_doc(
 				{
-					"doctype": "Wealthreader Connection",
+					"doctype": "QuickBanks Connection",
 					"bank": bank_name,
 					"company": company,
 					"token": token,
@@ -411,12 +411,12 @@ def add_or_update_connection(bank_name, company, token):
 		return conn
 	except Exception:
 		frappe.db.rollback(save_point="wr_connection")
-		frappe.log_error("Wealthreader Connection creation error")
+		frappe.log_error("QuickBanks Connection creation error")
 		raise
 
 
 def _get_connection_license_status():
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	if settings.license_expiry_date and getdate(settings.license_expiry_date) < today():
 		return "Expired"
 	return "Licensed"
@@ -525,7 +525,7 @@ def _upsert_bank_account(
 					"iban": account.get("code", ""),
 					"bank_account_no": account.get("code", ""),
 					"integration_id": account_uuid,
-					"wealthreader_source": source,
+					"quickbanks_source": source,
 					"is_company_account": 1,
 					"company": company,
 					"is_credit_card": is_credit_card,
@@ -548,7 +548,7 @@ def _upsert_bank_account(
 				_(
 					"There was an error creating Bank Account while linking with Wealthreader."
 				),
-				title=_("Wealthreader Link Failed"),
+				title=_("QuickBanks Link Failed"),
 			)
 	else:
 		frappe.db.savepoint("wr_update_account")
@@ -563,7 +563,7 @@ def _upsert_bank_account(
 					"iban": account.get("code", ""),
 					"bank_account_no": account.get("code", ""),
 					"integration_id": account_uuid,
-					"wealthreader_source": source,
+					"quickbanks_source": source,
 					"is_credit_card": is_credit_card,
 				}
 			)
@@ -576,7 +576,7 @@ def _upsert_bank_account(
 				_(
 					"There was an error updating Bank Account {0} while linking with Wealthreader."
 				).format(existing_bank_account),
-				title=_("Wealthreader Link Failed"),
+				title=_("QuickBanks Link Failed"),
 			)
 
 
@@ -587,7 +587,7 @@ def sync_transactions(bank, bank_account, connection_name=None):
 		last_transaction_date = frappe.db.get_value(
 			"Bank Account", bank_account, "last_integration_date"
 		)
-		settings = frappe.get_single("Wealthreader Settings")
+		settings = frappe.get_single("QuickBanks Settings")
 
 		if last_transaction_date:
 			start_date = formatdate(last_transaction_date, "YYYY-MM-dd")
@@ -617,13 +617,13 @@ def sync_transactions(bank, bank_account, connection_name=None):
 
 		# Resolve the target account UUID and source
 		related_bank = frappe.db.get_values(
-			"Bank Account", bank_account, ["integration_id", "wealthreader_source"], as_dict=True
+			"Bank Account", bank_account, ["integration_id", "quickbanks_source"], as_dict=True
 		)
 		if not related_bank:
 			return
 
 		account_uuid = related_bank[0].integration_id
-		source = related_bank[0].wealthreader_source or "accounts"
+		source = related_bank[0].quickbanks_source or "accounts"
 
 		transactions = []
 		if source == "accounts":
@@ -659,7 +659,7 @@ def sync_transactions(bank, bank_account, connection_name=None):
 			)
 
 		if connection_name:
-			frappe.db.set_value("Wealthreader Connection", connection_name, "last_sync", now())
+			frappe.db.set_value("QuickBanks Connection", connection_name, "last_sync", now())
 
 		frappe.logger().info(
 			f"Wealthreader added {len(result)} new Bank Transactions from '{bank_account}' between {start_date} and {end_date}"
@@ -672,27 +672,27 @@ def sync_transactions(bank, bank_account, connection_name=None):
 def _get_access_token(bank, connection_name=None):
 	"""Resolve the Wealthreader token from the Connection record or the Bank fallback."""
 	if connection_name:
-		conn = frappe.get_doc("Wealthreader Connection", connection_name)
+		conn = frappe.get_doc("QuickBanks Connection", connection_name)
 		if conn.token:
 			return conn.get_password("token")
 
 	bank_doc = frappe.get_doc("Bank", bank)
-	if bank_doc.wealthreader_token:
-		return bank_doc.get_password("wealthreader_token")
+	if bank_doc.quickbanks_token:
+		return bank_doc.get_password("quickbanks_token")
 
 	return None
 
 
 @frappe.whitelist()
 def enqueue_synchronization():
-	"""Queue sync jobs for all active Wealthreader connections."""
-	settings = frappe.get_single("Wealthreader Settings")
+	"""Queue sync jobs for all active QuickBanks connections."""
+	settings = frappe.get_single("QuickBanks Settings")
 	valid, message = settings.is_license_valid()
 	if not valid:
 		frappe.throw(message)
 
 	connections = frappe.get_all(
-		"Wealthreader Connection",
+		"QuickBanks Connection",
 		filters={"status": "Active"},
 		fields=["name", "bank", "company"],
 	)
@@ -704,13 +704,13 @@ def enqueue_synchronization():
 				"bank": connection.bank,
 				"company": connection.company,
 				"integration_id": ["!=", ""],
-				"wealthreader_source": ["is", "set"],
+				"quickbanks_source": ["is", "set"],
 			},
 			fields=["name"],
 		)
 		for bank_account in bank_accounts:
 			frappe.enqueue(
-				"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.sync_transactions",
+				"quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.sync_transactions",
 				bank=connection.bank,
 				bank_account=bank_account.name,
 				connection_name=connection.name,
@@ -719,14 +719,14 @@ def enqueue_synchronization():
 
 def automatic_synchronization():
 	"""Entry point for the hourly scheduler."""
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	if settings.enabled and settings.automatic_sync:
 		enqueue_synchronization()
 
 
 def report_usage():
 	"""Entry point for the daily usage-report scheduler."""
-	settings = frappe.get_single("Wealthreader Settings")
+	settings = frappe.get_single("QuickBanks Settings")
 	if settings.enabled and settings.hub_url and settings.activation_key:
 		settings.report_usage_to_hub()
 
@@ -756,7 +756,7 @@ def new_bank_transaction(transaction, account_uuid, source):
 
 	bank_account = frappe.db.get_value(
 		"Bank Account",
-		{"integration_id": account_uuid, "wealthreader_source": source},
+		{"integration_id": account_uuid, "quickbanks_source": source},
 	)
 	if not bank_account:
 		return result
@@ -815,7 +815,7 @@ def new_bank_transaction(transaction, account_uuid, source):
 		new_transaction.submit()
 		result.append(new_transaction.name)
 	except Exception:
-		frappe.log_error(frappe.get_traceback(), _("Wealthreader Bank Transaction Error"))
+		frappe.log_error(frappe.get_traceback(), _("QuickBanks Bank Transaction Error"))
 		frappe.throw(_("Bank transaction creation error"))
 
 	return result

@@ -1,14 +1,14 @@
 // Copyright (c) 2026, ADMBit Technologies and contributors
 // For license information, please see license.txt
 
-frappe.listview_settings["Wealthreader Connection"] = {
+frappe.listview_settings["QuickBanks Connection"] = {
 	onload: function (listview) {
 		listview.page.add_inner_button(__("Connect Bank Account"), function () {
-			new erpnext.integrations.wealthreaderLink({});
+			new erpnext.integrations.quickbanksLink({});
 		});
 
 		frappe.xcall(
-			"wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.get_license_summary"
+			"quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.get_license_summary"
 		).then((summary) => {
 			let monthly_cost = flt(summary.active_connections) * 15;
 			let indicator = summary.can_add_connection ? "green" : "orange";

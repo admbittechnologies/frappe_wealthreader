@@ -1,7 +1,7 @@
 // Copyright (c) 2026, ADMBit Technologies and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Wealthreader Settings", {
+frappe.ui.form.on("QuickBanks Settings", {
 	enabled: function (frm) {
 		frm.trigger("refresh");
 	},
@@ -24,12 +24,12 @@ frappe.ui.form.on("Wealthreader Settings", {
 
 		if (frm.doc.api_key) {
 			frm.add_custom_button(__("Link Bank Account"), () => {
-				new erpnext.integrations.wealthreaderLink(frm);
+				new erpnext.integrations.quickbanksLink(frm);
 			});
 
 			frm.add_custom_button(__("Sync Now"), () => {
 				frappe.call({
-					method: "wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings.enqueue_synchronization",
+					method: "quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings.enqueue_synchronization",
 					freeze: true,
 					callback: () => {
 						let bank_transaction_link = frappe.utils.get_form_link(

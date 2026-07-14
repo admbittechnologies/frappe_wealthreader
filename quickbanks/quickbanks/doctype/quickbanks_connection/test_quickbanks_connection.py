@@ -4,5 +4,5 @@
 import unittest
 
 
-class TestWealthreaderConnection(unittest.TestCase):
+class TestQuickBanksConnection(unittest.TestCase):
 	pass

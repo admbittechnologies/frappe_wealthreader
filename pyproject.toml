@@ -1,9 +1,9 @@
 [project]
-name = "wealthreader"
+name = "quickbanks"
 authors = [
     { name = "ADMBit Technologies", email = "info@admbit.com" }
 ]
-description = "Wealthreader bank feed integration for ERPNext"
+description = "QuickBanks bank feed integration for ERPNext via Wealthreader"
 readme = "README.md"
 requires-python = ">=3.10"
 dynamic = ["version"]
@@ -16,7 +16,7 @@ requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.module]
-name = "wealthreader"
+name = "quickbanks"
 
 [tool.bench.frappe-dependencies]
 frappe = ">=15.0.0,<16.0.0"

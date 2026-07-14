@@ -16,7 +16,7 @@ class WealthreaderConnector:
 	}
 
 	def __init__(self):
-		self.settings = frappe.get_single("Wealthreader Settings")
+		self.settings = frappe.get_single("QuickBanks Settings")
 		if not self.settings.environment:
 			frappe.throw(_("Wealthreader Environment is not configured."))
 		if self.settings.environment not in self.BASE_URLS:

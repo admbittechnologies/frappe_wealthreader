@@ -51,7 +51,7 @@
    "label": "Activation"
   },
   {
-   "description": "URL of the ADMBit Wealthreader Hub instance, e.g. https://hub.admbit.com",
+   "description": "URL of the ADMBit QuickBanks Hub instance, e.g. https://hub.admbit.com",
    "fieldname": "hub_url",
    "fieldtype": "Data",
    "label": "Hub URL"
@@ -161,8 +161,8 @@
  "links": [],
  "modified": "2026-07-09 16:00:00.000000",
  "modified_by": "Administrator",
- "module": "Wealthreader",
- "name": "Wealthreader Settings",
+ "module": "QuickBanks",
+ "name": "QuickBanks Settings",
  "owner": "Administrator",
  "permissions": [
   {

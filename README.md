@@ -1,25 +1,25 @@
-# Wealthreader Integration for ERPNext
+# QuickBanks for ERPNext
 
-A Frappe app that connects ERPNext to [Wealthreader](https://www.wealthreader.com/) for automatic bank transaction synchronization, similar to the built-in Plaid integration.
+A Frappe app that connects ERPNext to [Wealthreader](https://www.wealthreader.com/) for automatic bank transaction synchronization, similar to the built-in Plaid integration. The product is branded **QuickBanks**; Wealthreader is the underlying bank-data provider.
 
 ## Model
 
-ADMBit holds the Wealthreader API contract in a central **Wealthreader Hub**. Each client site activates itself with an activation key and receives the API credentials from the hub. The end client never sees the API key.
+ADMBit holds the Wealthreader API contract in a central **QuickBanks Hub**. Each client site activates itself with an activation key and receives the API credentials from the hub. The end client never sees the API key.
 
 ## End-client experience
 
 1. Open the **Bank Sync** workspace in ERPNext.
 2. Click **Connect Bank Account**.
 3. Select a company and bank name, then complete the Wealthreader widget flow.
-4. Bank accounts and transactions are created automatically via the callback.
+4. Bank accounts and transactions are created automatically via the Wealthreader callback.
 5. View and manage connections from **Bank Sync > Connections**.
 
 ## Client setup
 
 1. Install the app on the client bench/site.
-2. Open **Wealthreader Settings** (System Manager only).
+2. Open **QuickBanks Settings** (System Manager only).
 3. Enter:
-   - **Hub URL** — your ADMBit Wealthreader Hub instance, e.g. `https://hub.admbit.com`
+   - **Hub URL** — your ADMBit QuickBanks Hub instance, e.g. `https://hub.admbit.com`
    - **Activation Key** — provided by ADMBit
 4. Save. The app calls the hub and auto-fills:
    - Wealthreader API key (hidden)
@@ -40,9 +40,9 @@ ADMBit holds the Wealthreader API contract in a central **Wealthreader Hub**. Ea
 
 ## Synchronization
 
-- **Manual**: Click **Sync Now** on `Wealthreader Settings`.
-- **Automatic**: Enable **Synchronize every hour** in `Wealthreader Settings`.
-- Sync jobs iterate over active `Wealthreader Connection` records and refresh the linked bank accounts.
+- **Manual**: Click **Sync Now** on `QuickBanks Settings`.
+- **Automatic**: Enable **Synchronize every hour** in `QuickBanks Settings`.
+- Sync jobs iterate over active `QuickBanks Connection` records and refresh the linked bank accounts.
 
 ## Supported data
 
@@ -51,15 +51,15 @@ Currently ingests:
 - Credit/debit cards (`cards`)
 - Account and card transactions
 
-Other Wealthreader product types (loans, deposits, leases, portfolios, etc.) are ignored for the bank-transaction feed but remain available in the raw callback payload stored on `Wealthreader Link Session`.
+Other Wealthreader product types (loans, deposits, leases, portfolios, etc.) are ignored for the bank-transaction feed but remain available in the raw callback payload stored on `QuickBanks Link Session`.
 
 ## Security notes
 
 - The API key is fetched from the ADMBit Hub during activation and stored encrypted. It is **never visible in the ERPNext UI**.
-- The callback endpoint is `allow_guest` because Wealthreader POSTs to it from their servers. It immediately switches to Administrator context, but **only processes payloads that match a pending `Wealthreader Link Session`** created from the ERPNext UI.
-- The Wealthreader token is stored encrypted (Password field) on both the `Bank` DocType and the `Wealthreader Connection` DocType.
+- The callback endpoint is `allow_guest` because Wealthreader POSTs to it from their servers. It immediately switches to Administrator context, but **only processes payloads that match a pending `QuickBanks Link Session`** created from the ERPNext UI.
+- The Wealthreader token is stored encrypted (Password field) on both the `Bank` DocType and the `QuickBanks Connection` DocType.
 - `postMessage` events from the widget iframe are validated against the Wealthreader widget origin.
-- If Wealthreader provides a webhook signature mechanism, add it to `callback()` in `wealthreader_settings.py` before production use.
+- If Wealthreader provides a webhook signature mechanism, add it to `callback()` in `quickbanks_settings.py` before production use.
 
 ## Amount sign convention
 
@@ -74,7 +74,7 @@ This is the inverse of Plaid’s account-owner-centric convention. Verify agains
 Run the test suite inside a Frappe bench:
 
 ```bash
-bench --site <site-name> run-tests --app wealthreader
+bench --site <site-name> run-tests --app quickbanks
 ```
 
 ## License

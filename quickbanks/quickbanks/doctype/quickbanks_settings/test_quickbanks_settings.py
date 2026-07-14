@@ -7,16 +7,16 @@ import unittest
 import frappe
 from frappe.utils.response import json_handler
 
-from wealthreader.wealthreader.doctype.wealthreader_settings.wealthreader_settings import (
+from quickbanks.quickbanks.doctype.quickbanks_settings.quickbanks_settings import (
 	add_bank_accounts,
 	get_widget_config,
 	new_bank_transaction,
 )
 
 
-class TestWealthreaderSettings(unittest.TestCase):
-	def test_wealthreader_disabled(self):
-		frappe.db.set_single_value("Wealthreader Settings", "enabled", 0)
+class TestQuickBanksSettings(unittest.TestCase):
+	def test_quickbanks_disabled(self):
+		frappe.db.set_single_value("QuickBanks Settings", "enabled", 0)
 		self.assertEqual(get_widget_config(), {"status": "disabled"})
 
 	def test_new_transaction_with_negative_amount(self):

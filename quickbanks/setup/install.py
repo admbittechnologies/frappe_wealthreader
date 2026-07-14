@@ -13,7 +13,7 @@ def make_custom_fields():
 	custom_fields = {
 		"Bank": [
 			{
-				"fieldname": "wealthreader_token",
+				"fieldname": "quickbanks_token",
 				"label": "Wealthreader Token",
 				"fieldtype": "Password",
 				"hidden": 1,
@@ -23,7 +23,7 @@ def make_custom_fields():
 		],
 		"Bank Account": [
 			{
-				"fieldname": "wealthreader_source",
+				"fieldname": "quickbanks_source",
 				"label": "Wealthreader Source",
 				"fieldtype": "Select",
 				"options": "\naccounts\ncards",

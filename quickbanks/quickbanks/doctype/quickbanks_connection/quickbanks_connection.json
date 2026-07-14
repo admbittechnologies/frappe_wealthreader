@@ -81,8 +81,8 @@
  "links": [],
  "modified": "2026-07-09 12:00:00.000000",
  "modified_by": "Administrator",
- "module": "Wealthreader",
- "name": "Wealthreader Connection",
+ "module": "QuickBanks",
+ "name": "QuickBanks Connection",
  "owner": "Administrator",
  "permissions": [
   {

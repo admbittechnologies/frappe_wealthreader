@@ -4,5 +4,5 @@
 from frappe.model.document import Document
 
 
-class WealthreaderLinkSession(Document):
+class QuickBanksLinkSession(Document):
 	pass
