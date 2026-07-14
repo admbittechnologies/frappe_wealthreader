@@ -10,6 +10,7 @@
  "name": "Connect Bank Account",
  "owner": "Administrator",
  "page_name": "Connect Bank Account",
+ "route": "connect-bank-account",
  "roles": [],
  "script": null,
  "standard": "Yes",
