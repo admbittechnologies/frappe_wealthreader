@@ -63,7 +63,7 @@
   {
    "fieldname": "token",
    "fieldtype": "Password",
-   "label": "Wealthreader Token"
+   "label": "QuickBanks Token"
   },
   {
    "default": "Today",

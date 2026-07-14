@@ -43,7 +43,7 @@ erpnext.integrations.quickbanksLink = class quickbanksLink {
 					label: __("Bank Name"),
 					fieldname: "bank_name",
 					reqd: 1,
-					default: __("Wealthreader Bank"),
+					default: __("QuickBanks Bank"),
 				},
 			],
 			async (data) => {

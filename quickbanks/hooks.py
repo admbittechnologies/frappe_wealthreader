@@ -4,7 +4,7 @@
 app_name = "quickbanks"
 app_title = "QuickBanks"
 app_publisher = "ADMBit Technologies"
-app_description = "Wealthreader bank feed integration for ERPNext"
+app_description = "QuickBanks bank feed integration for ERPNext via Wealthreader"
 app_email = "info@admbit.com"
 app_license = "MIT"
 required_apps = ["frappe/erpnext"]
