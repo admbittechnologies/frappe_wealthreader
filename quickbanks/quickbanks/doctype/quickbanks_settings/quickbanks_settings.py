@@ -187,30 +187,31 @@ class QuickBanksSettings(Document):
 
 		return True, ""
 
-	@staticmethod
-	@frappe.whitelist()
-	def get_widget_config():
-		settings = frappe.get_single("QuickBanks Settings")
-		if not settings.enabled:
-			return {"status": "disabled"}
 
-		allowed, message = settings.can_add_connection()
-		if not allowed:
-			return {"status": "limit_reached", "message": message}
 
-		date_from = None
-		if settings.sync_start_date:
-			date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
+@frappe.whitelist()
+def get_widget_config():
+	settings = frappe.get_single("QuickBanks Settings")
+	if not settings.enabled:
+		return {"status": "disabled"}
 
-		widget_domain = settings.widget_domain or frappe.utils.get_url()
+	allowed, message = settings.can_add_connection()
+	if not allowed:
+		return {"status": "limit_reached", "message": message}
 
-		return {
-			"operation_id": str(uuid.uuid4()),
-			"widget_domain": widget_domain,
-			"default_product_types": settings.default_product_types or "accounts,cards",
-			"environment": settings.environment,
-			"date_from": date_from,
-		}
+	date_from = None
+	if settings.sync_start_date:
+		date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
+
+	widget_domain = settings.widget_domain or frappe.utils.get_url()
+
+	return {
+		"operation_id": str(uuid.uuid4()),
+		"widget_domain": widget_domain,
+		"default_product_types": settings.default_product_types or "accounts,cards",
+		"environment": settings.environment,
+		"date_from": date_from,
+	}
 
 
 @frappe.whitelist()
