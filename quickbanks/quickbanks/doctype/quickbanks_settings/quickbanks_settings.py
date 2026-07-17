@@ -43,6 +43,10 @@ class QuickBanksSettings(Document):
 	# end: auto-generated types
 
 	def validate(self):
+		# Try to exchange the activation key for credentials before validating.
+		if self.enabled and self.hub_url and self.activation_key and not self.get_password("api_key"):
+			self.run_activation()
+
 		if self.enabled:
 			if not self.environment:
 				frappe.throw(_("Environment is required when QuickBanks is enabled."))
@@ -56,9 +60,6 @@ class QuickBanksSettings(Document):
 				frappe.throw(_("Allowed Connections cannot be negative."))
 
 		self.callback_url = self.get_callback_url()
-
-		if self.hub_url and self.activation_key and not self.get_password("api_key"):
-			self.run_activation()
 
 	def get_callback_url(self):
 		return frappe.utils.get_url(
