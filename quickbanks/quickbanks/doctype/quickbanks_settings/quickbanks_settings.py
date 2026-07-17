@@ -44,13 +44,13 @@ class QuickBanksSettings(Document):
 
 	def validate(self):
 		# Try to exchange the activation key for credentials before validating.
-		if self.enabled and self.hub_url and self.activation_key and not self.get_password("api_key"):
+		if self.enabled and self.hub_url and self.activation_key and not self.get_password("api_key", raise_exception=False):
 			self.run_activation()
 
 		if self.enabled:
 			if not self.environment:
 				frappe.throw(_("Environment is required when QuickBanks is enabled."))
-			if not self.get_password("api_key"):
+			if not self.get_password("api_key", raise_exception=False):
 				frappe.throw(
 					_(
 						"Wealthreader API key is not configured. Please run activation or ask ADMBit to provision it."
@@ -157,7 +157,7 @@ class QuickBanksSettings(Document):
 		if not self.enabled:
 			return False, _("QuickBanks integration is disabled.")
 
-		if not self.get_password("api_key"):
+		if not self.get_password("api_key", raise_exception=False):
 			return False, _(
 				"QuickBanks is not activated. Please enter the activation key provided by ADMBit."
 			)
@@ -224,7 +224,7 @@ def get_license_summary():
 	status = "Active"
 	if not settings.enabled:
 		status = "Disabled"
-	elif not settings.get_password("api_key"):
+	elif not settings.get_password("api_key", raise_exception=False):
 		status = "Not Activated"
 	elif settings.license_expiry_date and getdate(settings.license_expiry_date) < today():
 		status = "Expired"
