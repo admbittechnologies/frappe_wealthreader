@@ -23,7 +23,7 @@ class WealthreaderConnector:
 			frappe.throw(_("Invalid Wealthreader Environment: {0}").format(self.settings.environment))
 
 		self.base_url = self.BASE_URLS[self.settings.environment].rstrip("/")
-		self.api_key = self.settings.get_password("api_key")
+		self.api_key = self.settings.get_password("api_key", raise_exception=False)
 		if not self.api_key:
 			frappe.throw(_("Wealthreader API Key is not configured. Run activation first."))
 
