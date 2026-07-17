@@ -99,7 +99,7 @@ fixtures = [
 	},
 	{
 		"doctype": "Page",
-		"filters": [["name", "=", "Connect Bank Account"]],
+		"filters": [["name", "=", "connect-bank-account"]],
 	},
 ]
 
