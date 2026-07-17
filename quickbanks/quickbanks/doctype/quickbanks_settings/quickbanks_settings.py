@@ -79,6 +79,8 @@ class QuickBanksSettings(Document):
 			response = requests.post(url, json=payload, timeout=30)
 			response.raise_for_status()
 			result = response.json()
+			if isinstance(result, dict) and "message" in result:
+				result = result["message"]
 		except Exception as e:
 			self.activation_status = f"Activation failed: {str(e)}"
 			frappe.log_error("QuickBanks activation error", _("QuickBanks Activation"))
@@ -117,6 +119,8 @@ class QuickBanksSettings(Document):
 			response = requests.post(url, json=payload, timeout=30)
 			response.raise_for_status()
 			result = response.json()
+			if isinstance(result, dict) and "message" in result:
+				result = result["message"]
 			if result.get("status") != "ok":
 				message = f"Domain registration failed: {result.get('message', 'Unknown error')}"
 				self.activation_status += f"\n{message}"
