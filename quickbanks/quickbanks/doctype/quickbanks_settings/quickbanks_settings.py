@@ -99,39 +99,6 @@ class QuickBanksSettings(Document):
 			self.license_expiry_date = getdate(data["expiry_date"])
 		self.activation_status = "Activated successfully."
 
-		# Try to register this site's domain and callback with Wealthreader via the Hub.
-		self.register_domain_with_hub()
-
-	def register_domain_with_hub(self):
-		"""Ask the ADMBit Hub to authorize this site's domain and callback URL with Wealthreader."""
-		if not self.hub_url:
-			return
-
-		url = self.hub_url.rstrip("/") + "/api/method/wealthreader_hub.wealthreader_hub.api.register_domain"
-		payload = {
-			"activation_key": self.activation_key,
-			"site_url": frappe.utils.get_url(),
-			"site_name": frappe.local.site,
-			"callback_url": self.get_callback_url(),
-		}
-
-		try:
-			response = requests.post(url, json=payload, timeout=30)
-			response.raise_for_status()
-			result = response.json()
-			if isinstance(result, dict) and "message" in result:
-				result = result["message"]
-			if result.get("status") != "ok":
-				message = f"Domain registration failed: {result.get('message', 'Unknown error')}"
-				self.activation_status += f"\n{message}"
-				frappe.log_error(message, _("QuickBanks Domain Registration"))
-			else:
-				self.activation_status += "\nDomain and callback registered with Wealthreader."
-		except Exception as e:
-			message = f"Could not register domain/callback with Wealthreader Hub: {str(e)}"
-			self.activation_status += f"\n{message}"
-			frappe.log_error(message, _("QuickBanks Domain Registration"))
-
 	@frappe.whitelist()
 	def report_usage_to_hub(self):
 		"""Send today's active connection count to the ADMBit Hub."""
