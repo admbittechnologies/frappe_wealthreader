@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import uuid
+from urllib.parse import urlparse
 
 import frappe
 from frappe import _
@@ -93,7 +94,9 @@ class QuickBanksSettings(Document):
 		data = result["data"]
 		self.api_key = data.get("api_key")
 		self.environment = data.get("environment")
-		self.widget_domain = data.get("widget_domain") or frappe.utils.get_url()
+		self.widget_domain = _strip_domain_scheme(
+			data.get("widget_domain") or frappe.utils.get_url()
+		)
 		self.allowed_connections = cint(data.get("allowed_connections"))
 		if data.get("expiry_date"):
 			self.license_expiry_date = getdate(data["expiry_date"])
@@ -162,6 +165,14 @@ class QuickBanksSettings(Document):
 
 
 @frappe.whitelist()
+def _strip_domain_scheme(url):
+	"""Return the host (with port if present) and drop http/https from a URL."""
+	if not url:
+		return url
+	parsed = urlparse(url)
+	return parsed.netloc or url
+
+
 def get_widget_config():
 	settings = frappe.get_single("QuickBanks Settings")
 	if not settings.enabled:
@@ -175,7 +186,9 @@ def get_widget_config():
 	if settings.sync_start_date:
 		date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
 
-	widget_domain = settings.widget_domain or frappe.utils.get_url()
+	widget_domain = _strip_domain_scheme(
+		settings.widget_domain or frappe.utils.get_url()
+	)
 
 	return {
 		"operation_id": str(uuid.uuid4()),
