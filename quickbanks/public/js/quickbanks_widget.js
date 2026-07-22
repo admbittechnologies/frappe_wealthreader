@@ -18,8 +18,6 @@ frappe.provide("erpnext.integrations");
 erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 	constructor(opts) {
 		opts = opts || {};
-		this.widgetUrl = "https://widget.wealthreader.com/js/load.js";
-		this.widgetOrigin = new URL(this.widgetUrl).origin;
 		this.on_complete = opts.on_complete;
 		this.on_close = opts.on_close;
 	}
@@ -38,7 +36,10 @@ erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 		this.operation_id = config.operation_id;
 		this.environment = config.environment;
 		this.default_product_types = config.default_product_types || "accounts,cards";
-		this.widget_domain = config.widget_domain;
+		this.hub_url = config.hub_url;
+		this.activation_key = config.activation_key;
+		this.callback_url = config.callback_url;
+		this.hub_origin = this.hub_url ? new URL(this.hub_url).origin : "";
 		this.date_from = config.date_from;
 
 		frappe.prompt(
@@ -111,25 +112,12 @@ erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 
 		dialog.show();
 
-		// Configure the widget BEFORE injecting the loader script.
-		window.wr_conf = {
-			operation_id: me.operation_id,
-			entities_to_display: [],
-			wait_full_response: true,
-			product_types: me.default_product_types,
-		};
+		const iframe = document.getElementById("wr-iframe");
+		iframe.src = me.build_widget_url();
 
-		if (me.widget_domain) {
-			window.wr_conf.widget_domain = me.widget_domain;
-		}
-
-		if (me.date_from) {
-			window.wr_conf.date_from = me.date_from;
-		}
-
-		// Listen for widget lifecycle messages.
+		// Listen for widget lifecycle messages relayed by the Hub page.
 		const messageHandler = (e) => {
-			if (e.origin !== me.widgetOrigin) {
+			if (e.origin !== me.hub_origin) {
 				return;
 			}
 
@@ -165,31 +153,18 @@ erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 				me.on_close();
 			}
 		};
-
-		// Load the widget script.  A cache-busting query string is used so that
-		// repeated openings pick up the fresh wr_conf for the new operation_id.
-		me.loadScript(me.widgetUrl + "?v=" + encodeURIComponent(me.operation_id))
-			.then(() => {
-				frappe.logger && frappe.logger.debug("Wealthreader widget script loaded.");
-			})
-			.catch((error) => {
-				frappe.msgprint(
-					__("There was an issue loading the Wealthreader widget. Check the browser console for details.")
-				);
-				console.error(error);
-			});
 	}
 
-	loadScript(src) {
-		return new Promise(function (resolve, reject) {
-			const el = document.createElement("script");
-			el.type = "text/javascript";
-			el.async = true;
-			el.src = src;
-			el.addEventListener("load", resolve);
-			el.addEventListener("error", reject);
-			el.addEventListener("abort", reject);
-			document.head.appendChild(el);
-		});
+	build_widget_url() {
+		const params = new URLSearchParams();
+		params.set("activation_key", this.activation_key);
+		params.set("operation_id", this.operation_id);
+		params.set("callback_url", this.callback_url);
+		params.set("parent_origin", window.location.origin);
+		params.set("product_types", this.default_product_types);
+		if (this.date_from) {
+			params.set("date_from", this.date_from);
+		}
+		return `${this.hub_url}/quickbanks-widget?${params.toString()}`;
 	}
 };

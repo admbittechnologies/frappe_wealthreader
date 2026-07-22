@@ -187,13 +187,11 @@ def get_widget_config():
 	if settings.sync_start_date:
 		date_from = formatdate(settings.sync_start_date, "YYYY-MM-dd")
 
-	widget_domain = _strip_domain_scheme(
-		settings.widget_domain or frappe.utils.get_url()
-	)
-
 	return {
 		"operation_id": str(uuid.uuid4()),
-		"widget_domain": widget_domain,
+		"hub_url": settings.hub_url.rstrip("/") if settings.hub_url else "",
+		"activation_key": settings.activation_key,
+		"callback_url": settings.get_callback_url(),
 		"default_product_types": settings.default_product_types or "accounts,cards",
 		"environment": settings.environment,
 		"date_from": date_from,
