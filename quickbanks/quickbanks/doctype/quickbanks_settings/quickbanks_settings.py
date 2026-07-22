@@ -173,6 +173,7 @@ def _strip_domain_scheme(url):
 	return parsed.netloc or url
 
 
+@frappe.whitelist()
 def get_widget_config():
 	settings = frappe.get_single("QuickBanks Settings")
 	if not settings.enabled:
