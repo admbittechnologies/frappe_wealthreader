@@ -98,22 +98,21 @@ erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 	open_widget() {
 		const me = this;
 
+		const widgetUrl = me.build_widget_url();
+
 		const dialog = new frappe.ui.Dialog({
 			title: __("Connect Bank Account"),
 			fields: [
 				{
 					fieldname: "widget_html",
 					fieldtype: "HTML",
-					options: `<iframe id="wr-iframe" title="Wealth Reader widget" width="100%" height="650" frameBorder="0" referrerpolicy="origin"></iframe>`,
+					options: `<iframe id="wr-iframe" src="${widgetUrl}" title="Wealth Reader widget" width="100%" height="650" frameBorder="0" referrerpolicy="origin"></iframe>`,
 				},
 			],
 			size: "large",
 		});
 
 		dialog.show();
-
-		const iframe = document.getElementById("wr-iframe");
-		iframe.src = me.build_widget_url();
 
 		// Listen for widget lifecycle messages relayed by the Hub page.
 		const messageHandler = (e) => {
