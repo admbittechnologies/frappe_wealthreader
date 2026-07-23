@@ -164,6 +164,6 @@ erpnext.integrations.quickbanksWidget = class quickbanksWidget {
 		if (this.date_from) {
 			params.set("date_from", this.date_from);
 		}
-		return `${this.hub_url}/quickbanks-widget?${params.toString()}`;
+		return `${this.hub_url}/api/method/wealthreader_hub.wealthreader_hub.api.widget?${params.toString()}`;
 	}
 };
